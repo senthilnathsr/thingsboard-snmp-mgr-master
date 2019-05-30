@@ -1,0 +1,25 @@
+{
+  "widgetsBundle": {
+    "alias": "rpctodevice",
+    "title": "RPCToDevice",
+    "image": null
+  },
+  "widgetTypes": [
+    {
+      "alias": "snmpgettodevicerpc_widget",
+      "name": "SNMPGETToDeviceRPC Widget",
+      "descriptor": {
+        "type": "rpc",
+        "sizeX": 11.5,
+        "sizeY": 7,
+        "resources": [],
+        "templateHtml": "<form name=\"rpcForm\" ng-submit=\"sendCommand()\">\n    <md-content class=\"md-padding\" layout=\"column\">\n        <md-input-container>\n            <label>RPC method</label>\n            <input required name=\"rpcMethod\" ng-model=\"rpcMethod\" />\n            <div ng-messages=\"rpcForm.rpcMethod.$error\">\n                <div ng-message=\"required\">RPC method name\n                    is required.</div>\n            </div>\n        </md-input-container>\n        <md-input-container>\n            <label>RPC params</label>\n            <input required name=\"rpcParams\" ng-model=\"rpcParams\" />\n            <div ng-messages=\"rpcForm.rpcParams.$error\">\n                <div ng-message=\"required\">RPC params is\n                    required.</div>\n            </div>\n        </md-input-container>\n        <md-button ng-disabled=\"rpcForm.$invalid || !rpcForm.$dirty\"\n            type=\"submit\" class=\"md-raised md-primary\">\n            Send RPC command\n        </md-button>\n        <div>\n            <label>RPC command response</label>\n            <div style=\"width: 100%; height: 100px; border: solid 2px gray\"\n                ng-bind-html=\"rpcCommandResponse\">\n            </div>\n        </div>\n    </md-content>\n</form>",
+        "templateCss": "",
+        "controllerScript": "self.onInit = function() {\n\n    self.ctx.$scope.sendCommand = function() {\n        var rpcMethod = self.ctx.$scope.rpcMethod;\n        var rpcParams = self.ctx.$scope.rpcParams;\n        var timeout = self.ctx.settings.requestTimeout;\n        var oneWayElseTwoWay = self.ctx.settings.oneWayElseTwoWay ?\n            true : false;\n            \n        oneWayElseTwoWay=false;\n\n        var commandPromise;\n        if (oneWayElseTwoWay) {\n            commandPromise = self.ctx.controlApi.sendOneWayCommand(\n                rpcMethod, rpcParams, timeout);\n        } else {\n            commandPromise = self.ctx.controlApi.sendTwoWayCommand(\n                rpcMethod, rpcParams, timeout);\n        }\n        commandPromise.then(\n            function success(response) {\n                if (oneWayElseTwoWay) {\n                    self.ctx.$scope.rpcCommandResponse =\n                        \"Command was successfully received by device.<br/> No response body because of one way command mode.\";\n                } else {\n                    self.ctx.$scope.rpcCommandResponse =\n                        \"Response from device:<br/>\";\n                    self.ctx.$scope.rpcCommandResponse +=\n                        angular.toJson(response);\n                }\n            },\n            function fail(rejection) {\n                self.ctx.$scope.rpcCommandResponse =\n                    \"Failed to send command to the device:<br/>\"\n                self.ctx.$scope.rpcCommandResponse +=\n                    \"Status: \" + rejection.status +\n                    \"<br/>\";\n                self.ctx.$scope.rpcCommandResponse +=\n                    \"Status text: '\" +\n                    rejection.statusText + \"'\";\n            }\n\n        );\n    }\n\n}",
+        "settingsSchema": "{\n    \"schema\": {\n        \"type\": \"object\",\n        \"title\": \"Settings\",\n        \"properties\": {\n            \"oneWayElseTwoWay\": {\n                \"title\": \"Is One Way Command\",\n                \"type\": \"boolean\",\n                \"default\": false\n            },\n            \"requestTimeout\": {\n                \"title\": \"RPC request timeout\",\n                \"type\": \"number\",\n                \"default\": 500\n            }\n        },\n        \"required\": []\n    },\n    \"form\": [\n        \"oneWayElseTwoWay\",\n        \"requestTimeout\"\n    ]\n}",
+        "dataKeySettingsSchema": "{}\n",
+        "defaultConfig": "{\"targetDeviceAliases\":[],\"showTitle\":true,\"backgroundColor\":\"#fff\",\"color\":\"rgba(0, 0, 0, 0.87)\",\"padding\":\"0px\",\"settings\":{\"parseGpioStatusFunction\":\"return body[pin] === true;\",\"gpioStatusChangeRequest\":{\"method\":\"setGpioStatus\",\"paramsBody\":\"{\\n   \\\"pin\\\": \\\"{$pin}\\\",\\n   \\\"enabled\\\": \\\"{$enabled}\\\"\\n}\"},\"requestTimeout\":500,\"switchPanelBackgroundColor\":\"#b71c1c\",\"gpioStatusRequest\":{\"method\":\"getGpioStatus\",\"paramsBody\":\"{}\"},\"gpioList\":[{\"pin\":1,\"label\":\"GPIO 1\",\"row\":0,\"col\":0,\"_uniqueKey\":0},{\"pin\":2,\"label\":\"GPIO 2\",\"row\":0,\"col\":1,\"_uniqueKey\":1},{\"pin\":3,\"label\":\"GPIO 3\",\"row\":1,\"col\":0,\"_uniqueKey\":2}]},\"title\":\"SNMPGETToDeviceRPC Widget\"}"
+      }
+    }
+  ]
+}

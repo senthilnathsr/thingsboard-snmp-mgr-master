@@ -1,0 +1,15 @@
+
+snmp:
+  server:
+    targetAddress: "${SNMP_SERVER_TARGETADDRESS:127.0.0.1}"
+    targetPort: "${SNMP_SERVER_TARGETPORT:9999}"
+    sendTimeout: "${SNMP_SERVER_SEND_TIMEOUT:10000}"
+    sendRetries: "${SNMP_SERVER_SEND_RETRIES:2}"
+  agent:
+    trapOid: "${SNMP_AGENT_TRAP_OID:.1.3.6.1.2.1.1.6}"
+    community: "${SNMP_AGENT_COMMUNITY:public}"
+    agentHost: "${SNMP_AGENT_HOST:127.0.0.1}"
+    agentPort: "${SNMP_AGENT_PORT:9988}"
+    scheduled:
+      trapSendRate: "${SNMP_AGENT_SCHEDULED_TRAP_SEND_RATE:1800000}"
+      attrsSendRate: "${SNMP_AGENT_SCHEDULED_ATTRS_SEND_RATE:2000000}"
